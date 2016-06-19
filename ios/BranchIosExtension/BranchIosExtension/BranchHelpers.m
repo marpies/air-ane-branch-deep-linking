@@ -23,7 +23,7 @@
     
     branch = useTestKey ? [Branch getTestInstance] : [Branch getInstance];
     
-    [branch initSessionAndRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         
         if (!error) {
             
