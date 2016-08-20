@@ -23,7 +23,7 @@ Inside the `*-app.xml` you must add **your Branch App Key** (refer to the [dashb
 <iPhone><InfoAdditions><![CDATA[
 	<!-- other stuff -->
 	<key>branch_key</key>
-	<string>key_live_dcixJiAqOixZkdkLxgiTLkeovycqdUPp</string>
+	<string>key_live_xxxx</string>
 ]]></InfoAdditions></iPhone>
 ```
 For a full example of the `*-app.xml` please refer to the [demo](https://github.com/BranchMetrics/Branch-AIR-ANE-SDK/blob/master/bin/Branch-AIR-ANE-SDK-app.xml).
