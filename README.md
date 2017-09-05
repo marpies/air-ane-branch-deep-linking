@@ -12,7 +12,7 @@ Import the ANE
 Import the `Branch.ane` into your project. Depending your IDE you might need to import the `Branch.swc` as well.  
 Inside your `*-app.xml` be sure to add this line `<extensionID>io.branch.nativeExtensions.Branch</extensionID>`
 
-Register you app
+Register your app
 ----------------
 You can sign up for your own app id at [https://dashboard.branch.io](https://dashboard.branch.io)
 
