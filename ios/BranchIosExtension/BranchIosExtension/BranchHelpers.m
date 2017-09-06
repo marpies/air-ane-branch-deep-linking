@@ -20,15 +20,21 @@
 }
 
 - (void) initBranch:(BOOL) useTestKey {
+    Branch.useTestBranchKey = useTestKey;
     
-    branch = useTestKey ? [Branch getTestInstance] : [Branch getInstance];
-    
-    [branch initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] initSessionWithLaunchOptions:@{} andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
         
         if (!error) {
             
-            NSString *JSONString = [TypeConversion ConvertNSDictionaryToJSONString:params];
+            NSError *error;
+            NSData *JSONData = [NSJSONSerialization dataWithJSONObject:params options:kNilOptions error:&error];
+            NSString *JSONString = [[NSString alloc] initWithData:JSONData encoding:NSUTF8StringEncoding];
             
+            if (error) {
+                [self dispatchEvent:@"INIT_FAILED" withParams:error.description];
+                return;
+            }
+
             [self dispatchEvent:@"INIT_SUCCESSED" withParams:JSONString];
             
         } else {
@@ -39,9 +45,8 @@
 }
 
 - (void) setIdentity:(NSString *) userId {
-    
-    [branch setIdentity:userId withCallback:^(NSDictionary *params, NSError *error) {
-        
+    [[Branch getInstance] setIdentity:userId withCallback:^(NSDictionary *params, NSError *error) {
+
         if (!error) {
             
             [self dispatchEvent:@"SET_IDENTITY_SUCCESSED" withParams:@""];
@@ -60,8 +65,10 @@
     
     NSDictionary* params = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
     
-    if (jsonError)
+    if (jsonError) {
         [self dispatchEvent:@"GET_SHORT_URL_FAILED" withParams:jsonError.description];
+        return;
+    }
     
     callbackWithUrl callback = ^(NSString *url, NSError *error) {
         
@@ -73,17 +80,17 @@
     };
     
     if (alias.length != 0)
-        [branch getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias andCallback:callback];
+        [[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andAlias:alias andCallback:callback];
     
     else if (type != -1)
-        [branch getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andType:type andCallback:callback];
+        [[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andType:type andCallback:callback];
     else
-        [branch getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCallback:callback];
+        [[Branch getInstance] getShortURLWithParams:params andTags:tags andChannel:channel andFeature:feature andStage:stage andCallback:callback];
 }
 
 - (void) logout {
     
-    [branch logout];
+    [[Branch getInstance] logout];
 }
 
 - (void) userCompletedAction:(NSString *) action withState:(NSString *) appState {
@@ -94,25 +101,25 @@
     NSDictionary* params = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
     
     if (!jsonError)
-        [branch userCompletedAction:action withState:params];
+        [[Branch getInstance] userCompletedAction:action withState:params];
 }
 
 - (NSDictionary *) getLatestReferringParams {
     
-    return [branch getLatestReferringParams];
+    return [[Branch getInstance] getLatestReferringParams];
 }
 
 - (NSDictionary *) getFirstReferringParams {
     
-    return [branch getFirstReferringParams];
+    return [[Branch getInstance] getFirstReferringParams];
 }
 
 - (void) getCredits:(NSString *) bucket {
     
-    [branch loadRewardsWithCallback:^(BOOL changed, NSError *error) {
+    [[Branch getInstance] loadRewardsWithCallback:^(BOOL changed, NSError *error) {
         
         if (!error)
-            [self dispatchEvent:@"GET_CREDITS_SUCCESSED" withParams:[NSString stringWithFormat: @"%ld", (long) [branch getCreditsForBucket:bucket]]];
+            [self dispatchEvent:@"GET_CREDITS_SUCCESSED" withParams:[NSString stringWithFormat: @"%ld", (long) [[Branch getInstance] getCreditsForBucket:bucket]]];
         
         else
             [self dispatchEvent:@"GET_CREDITS_FAILED" withParams:error.description];
@@ -121,7 +128,7 @@
 
 - (void) redeemRewards:(NSInteger) credits andBucket:(NSString *) bucket {
     
-    [branch redeemRewards:credits forBucket:bucket callback:^(BOOL changed, NSError *error) {
+    [[Branch getInstance] redeemRewards:credits forBucket:bucket callback:^(BOOL changed, NSError *error) {
         
         if (!error)
             [self dispatchEvent:@"REDEEM_REWARDS_SUCCESSED" withParams:@""];
@@ -133,7 +140,7 @@
 
 - (void) getCreditsHistory:(NSString *) bucket {
     
-    [branch getCreditHistoryForBucket:bucket andCallback:^(NSArray *list, NSError *error) {
+    [[Branch getInstance] getCreditHistoryForBucket:bucket andCallback:^(NSArray *list, NSError *error) {
         
         if (!error)
             [self dispatchEvent:@"GET_CREDITS_HISTORY_SUCCESSED" withParams:[[list valueForKey:@"description"] componentsJoinedByString:@""]];
@@ -143,9 +150,10 @@
     }];
 }
 
+/*
 - (void) getReferralCode {
     
-    [branch getPromoCodeWithCallback:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] getPromoCodeWithCallback:^(NSDictionary *params, NSError *error) {
         
         if (!error)
             [self dispatchEvent:@"GET_REFERRAL_CODE_SUCCESSED" withParams:[params objectForKey:@"promo_code"]];
@@ -158,7 +166,7 @@
 - (void) createReferralCode:(NSString *)prefix amount:(NSInteger)amount expiration:(NSInteger)expiration bucket:(NSString *)bucket usageType:(NSInteger)usageType rewardLocation:(NSInteger)rewardLocation {
     
     
-    [branch getPromoCodeWithPrefix:prefix amount:amount expiration:[NSDate dateWithTimeIntervalSince1970:expiration / 1000] bucket:bucket usageType:usageType rewardLocation:rewardLocation callback:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] getPromoCodeWithPrefix:prefix amount:amount expiration:[NSDate dateWithTimeIntervalSince1970:expiration / 1000] bucket:bucket usageType:usageType rewardLocation:rewardLocation callback:^(NSDictionary *params, NSError *error) {
         
         if (!error)
             [self dispatchEvent:@"CREATE_REFERRAL_CODE_SUCCESSED" withParams:[params objectForKey:@"promo_code"]];
@@ -170,7 +178,7 @@
 
 - (void) validateReferralCode:(NSString *) code {
     
-    [branch validatePromoCode:code callback:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] validatePromoCode:code callback:^(NSDictionary *params, NSError *error) {
         
         if (!error) {
             
@@ -187,7 +195,7 @@
 
 - (void) applyReferralCode:(NSString *) code {
     
-    [branch applyPromoCode:code callback:^(NSDictionary *params, NSError *error) {
+    [[Branch getInstance] applyPromoCode:code callback:^(NSDictionary *params, NSError *error) {
         
         if (!error) {
             
@@ -200,6 +208,7 @@
     }];
     
 }
+// */
 
 - (void) dispatchEvent:(NSString *) event withParams:(NSString * ) params {
     

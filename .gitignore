@@ -13,3 +13,6 @@ android/proguard-project.txt
 android/project.properties
 bin/Branch-ANE.app.dSYM/Contents/
 *.xcuserstate
+project.xcworkspace
+xcuserdata
+.DS_Store

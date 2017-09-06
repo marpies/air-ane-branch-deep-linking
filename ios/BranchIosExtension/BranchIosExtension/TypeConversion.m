@@ -34,7 +34,7 @@
     const char* utf8String = string.UTF8String;
     unsigned long length = strlen(utf8String);
     
-    return FRENewObjectFromUTF8(length + 1, (uint8_t*) utf8String, asString);
+    return FRENewObjectFromUTF8((uint32_t)length + 1, (uint8_t*) utf8String, asString);
 }
 
 - (FREResult) FREGetObject:(FREObject)object asSetOfStrings:(NSMutableSet**)value {
