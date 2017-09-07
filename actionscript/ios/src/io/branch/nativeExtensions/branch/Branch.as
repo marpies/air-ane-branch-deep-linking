@@ -44,7 +44,7 @@ package io.branch.nativeExtensions.branch {
 		}
 
 		public function setIdentity(userId:String):void {
-			
+
 			extensionContext.call("setIdentity", userId);
 		}
 
@@ -54,7 +54,7 @@ package io.branch.nativeExtensions.branch {
 		}
 
 		public function logout():void {
-			
+
 			extensionContext.call("logout");
 		}
 
@@ -74,7 +74,7 @@ package io.branch.nativeExtensions.branch {
 		}
 
 		public function getCredits(bucket:String = ""):void {
-			
+
 			extensionContext.call("getCredits", bucket);
 		}
 
@@ -88,8 +88,9 @@ package io.branch.nativeExtensions.branch {
 			extensionContext.call("getCreditsHistory", bucket);
 		}
 
+    /*
 		public function getReferralCode():void {
-			
+
 			extensionContext.call("getReferralCode");
 		}
 
@@ -99,7 +100,7 @@ package io.branch.nativeExtensions.branch {
 		}
 
 		public function validateReferralCode(code:String):void {
-			
+
 			extensionContext.call("validateReferralCode", code);
 		}
 
@@ -107,5 +108,6 @@ package io.branch.nativeExtensions.branch {
 
 			extensionContext.call("applyReferralCode", code);
 		}
+		// */
 	}
 }

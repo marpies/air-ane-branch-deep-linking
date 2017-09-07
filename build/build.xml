@@ -16,14 +16,14 @@
 		</exec>
 
 		<copy file="../temp/ios/build/Release-iphoneos/lib${name}IosExtension.a" todir="../temp/ios" overwrite="true" />
-		
+
 		<copy todir="../temp/Branch.framework" overwrite="true">
 			<fileset dir="../ios/${name}IosExtension/Branch.framework" />
 		</copy>
 
 		<delete dir="../temp/ios/build/" />
 	</target>
-	
+
 	<target name="android" description="Build android Library">
 		<delete dir="../android/temp" />
 		<mkdir dir="../android/temp/classes" />
@@ -32,12 +32,12 @@
 			<classpath>
 				<pathelement location="${android.sdk}/android.jar" />
 				<pathelement location="../android/libs/FlashRuntimeExtensions.jar" />
-				<pathelement location="../android/libs/Branch-1.8.0.jar" />
+				<pathelement location="../android/libs/Branch-2.12.0.jar" />
 			</classpath>
 		</javac>
-		
+
 		<mkdir dir="../android/temp/zip" />
-		<unzip src="../android/libs/Branch-1.8.0.jar" dest="../android/temp/zip"/>
+		<unzip src="../android/libs/Branch-2.12.0.jar" dest="../android/temp/zip"/>
 		<copydir src="../android/temp/zip/io" dest="../android/temp/classes/io"/>
 
 		<mkdir dir="../temp/android/" />
@@ -70,7 +70,7 @@
 		<copy file="../temp/swc/content/library.swf" todir="../temp/ios" overwrite="true" />
 		<delete dir="../temp/swc/content/" />
 	</target>
-	
+
 	<target name="android-swc" description="Build android swc library">
 		<mkdir dir="../temp/swc/content/" />
 
@@ -147,7 +147,7 @@
 		<move file="../temp/default/${name}.swc" todir="../bin" />
 		<delete dir="../temp"/>
 	</target>
-	
+
 	<!-- HTML Documentation (must be run manually) -->
 	<target name="asdoc" description="generate the asdoc in readable html">
 		<java jar="${sdk.home}/lib/legacy/asdoc.jar" fork="true" failonerror="true">

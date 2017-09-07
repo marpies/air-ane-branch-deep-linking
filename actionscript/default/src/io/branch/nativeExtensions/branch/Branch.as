@@ -69,7 +69,7 @@ package io.branch.nativeExtensions.branch {
 		* <b>Warning</b> this call will clear the referral credits and attribution on the device.
 		*/
 		public function logout():void {
-			
+
 		}
 
 		/**
@@ -107,7 +107,7 @@ package io.branch.nativeExtensions.branch {
 		* @param bucket The bucket to get credits balance from.
 		*/
 		public function getCredits(bucket:String = ""):void {
-			
+
 		}
 
 		/**
@@ -126,48 +126,6 @@ package io.branch.nativeExtensions.branch {
 		* @param bucket The bucket to get credits balance from.
 		*/
 		public function getCreditsHistory(bucket:String = ""):void {
-
-		}
-
-		/**
-		* Retrieve the referral code created by current user.
-		* Be sure to listen <code>GET_REFERRAL_CODE_SUCCESSED</code> and <code>GET_REFERRAL_CODE_FAILED</code> events.
-		*/
-		public function getReferralCode():void {
-
-		}
-
-		/**
-		* Create a new referral code for the current user, only if this user doesn't have any existing non-expired referral code.
-		* Be sure to listen <code>CREATE_REFERRAL_CODE_SUCCESSED</code> and <code>CREATE_REFERRAL_CODE_FAILED</code> events.
-		* @prefix The prefix to the referral code that you desire.
-		* @amount The amount of credit to redeem when user applies the referral code.
-		* @expiration The expiration date of the referral code, a number of milliseconds since midnight January 1, 1970, universal time.
-		* @bucket The name of the bucket to use.
-		* @calculationType This defines whether the referral code can be applied indefinitely, or only once per user. Check <code>BranchConst.REFERRAL_CODE_AWARD_UNLIMITED</code>: referral code can be applied continually and <code>BranchConst.REFERRAL_CODE_AWARD_UNIQUE</code>: a user can only apply a specific referral code once.
-		* @location The user to reward for applying the referral code. Check <code>BranchConst.REFERRAL_CODE_LOCATION_REFERREE</code>: the user applying the referral code receives credit, <code>BranchConst.REFERRAL_CODE_LOCATION_REFERRING_USER</code>: the user who created the referral code receives credit and <code>BranchConst.REFERRAL_CODE_LOCATION_BOTH</code>: both the creator and applicant receive credit.
-		*/
-		public function createReferralCode(prefix:String, amount:int, expiration:int, bucket:String, calculationType:int, location:int):void {
-
-		}
-
-		/**
-		* Validate if a referral code exists in Branch system and is still valid. A code is vaild if:
-		* <ul><li>It hasn't expired.</li>
-		* <li>If its calculation type is uniqe, it hasn't been applied by current user.</li></ul>
-		* Be sure to listen <code>VALIDATE_REFERRAL_CODE_SUCCESSED</code> and <code>VALIDATE_REFERRAL_CODE_FAILED</code> events.
-		* @param code The referral code to validate.
-		*/
-		public function validateReferralCode(code:String):void {
-
-		}
-
-		/**
-		* Apply a referral code if it exists in Branch system and is still valid.
-		* Be sure to listen <code>APPLY_REFERRAL_CODE_SUCCESSED</code> and <code>APPLY_REFERRAL_CODE_FAILED</code> events.
-		* @param code The referral code to apply.
-		*/
-		public function applyReferralCode(code:String):void {
 
 		}
 	}
