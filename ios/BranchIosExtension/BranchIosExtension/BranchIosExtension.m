@@ -43,28 +43,9 @@ DEFINE_ANE_FUNCTION(setIdentity) {
 
 DEFINE_ANE_FUNCTION(getShortUrl) {
     
-    NSMutableSet* tags;
-    [typeConverter FREGetObject:argv[0] asSetOfStrings:&tags];
+    FREObject linkProperties = argv[0];
     
-    NSString* channel;
-    [typeConverter FREGetObject:argv[1] asString:&channel];
-    
-    NSString* feature;
-    [typeConverter FREGetObject:argv[2] asString:&feature];
-    
-    NSString* stage;
-    [typeConverter FREGetObject:argv[3] asString:&stage];
-    
-    NSString* json;
-    [typeConverter FREGetObject:argv[4] asString:&json];
-    
-    NSString* alias;
-    [typeConverter FREGetObject:argv[5] asString:&alias];
-    
-    int32_t type;
-    FREGetObjectAsInt32(argv[6], &type);
-    
-    [branchHelpers getShortURL:json andTags:[tags allObjects] andChannel:channel andFeature:feature andStage:stage andAlias:alias andType:type];
+    [branchHelpers getShortURL:linkProperties];
     
     return NULL;
 }
@@ -81,10 +62,7 @@ DEFINE_ANE_FUNCTION(userCompletedAction) {
     NSString* action;
     [typeConverter FREGetObject:argv[0] asString:&action];
     
-    NSString* appState;
-    [typeConverter FREGetObject:argv[1] asString:&appState];
-    
-    [branchHelpers userCompletedAction:action withState:appState];
+    [branchHelpers userCompletedAction:action];
     
     return NULL;
 }
@@ -196,75 +174,14 @@ DEFINE_ANE_FUNCTION(applyReferralCode) {
     return NULL;
 }
 
-bool applicationDidFinishLaunchingWithOptions(id self, SEL _cmd, UIApplication* application, NSDictionary* launchOptions) {
-    //NSLog(@"applicationDidFinishLaunchingWithOptions");
+DEFINE_ANE_FUNCTION(prepareUniversalObject) {
     
-    Branch *branch = [Branch getInstance];
-    [branch initSessionWithLaunchOptions:launchOptions andRegisterDeepLinkHandler:^(NSDictionary *params, NSError *error) {
-        
-        if (!error) {
-            
-            NSString *JSONString = [TypeConversion ConvertNSDictionaryToJSONString:params];
-            
-            [branchHelpers dispatchEvent:@"INIT_SUCCESSED" withParams:JSONString];
-            
-        } else {
-            
-            [branchHelpers dispatchEvent:@"INIT_FAILED" withParams:error.description];
-        }
-    }];
+    [branchHelpers prepareUniversalObject:argv[0]];
     
-    return YES;
-}
-
-bool applicationOpenURLSourceApplication(id self, SEL _cmd, UIApplication* application, NSURL* url, NSString* sourceApplication, id annotation) {
-    //NSLog(@"applicationOpenURLSourceApplication");
-    
-    // if handleDeepLink returns YES, and you registered a callback in initSessionAndRegisterDeepLinkHandler, the callback will be called with the data associated with the deep link
-    if (![[Branch getInstance] handleDeepLink:url]) {
-        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
-    }
-    
-    return YES;
-}
-
-bool applicationContinueUserActivity(id self, SEL _cmd, UIApplication* application, NSUserActivity* userActivity, id restorationHandler) {
-    //NSLog(@"applicationContinueUserActivity");
-    
-    BOOL handledByBranch = [[Branch getInstance] continueUserActivity:userActivity];
-    
-    return handledByBranch;
+    return NULL;
 }
 
 void BranchContextInitializer(void* extData, const uint8_t* ctxType, FREContext ctx, uint32_t* numFunctionsToSet, const FRENamedFunction** functionsToSet) {
-    
-    id delegate = [[UIApplication sharedApplication] delegate];
-    
-    Class objectClass = object_getClass(delegate);
-    
-    NSString *newClassName = [NSString stringWithFormat:@"Custom_%@", NSStringFromClass(objectClass)];
-    Class  modDelegate = NSClassFromString(newClassName);
-    
-    if (modDelegate == nil) {
-        
-        modDelegate = objc_allocateClassPair(objectClass, [newClassName UTF8String], 0);
-        
-        SEL selectorToOverride1 = @selector(application:openURL:sourceApplication:annotation:);
-        SEL selectorToOverride2 = @selector(application:didFinishLaunchingWithOptions:);
-        SEL selectorToOverride3 = @selector(application:continueUserActivity:restorationHandler:);
-        
-        Method m1 = class_getInstanceMethod(objectClass, selectorToOverride1);
-        Method m2 = class_getInstanceMethod(objectClass, selectorToOverride2);
-        Method m3 = class_getInstanceMethod(objectClass, selectorToOverride3);
-        
-        class_addMethod(modDelegate, selectorToOverride1, (IMP)applicationOpenURLSourceApplication, method_getTypeEncoding(m1));
-        class_addMethod(modDelegate, selectorToOverride2, (IMP)applicationDidFinishLaunchingWithOptions, method_getTypeEncoding(m2));
-        class_addMethod(modDelegate, selectorToOverride3, (IMP)applicationContinueUserActivity, method_getTypeEncoding(m3));
-        
-        objc_registerClassPair(modDelegate);
-    }
-    
-    object_setClass(delegate, modDelegate);
     
     static FRENamedFunction functionMap[] = {
         MAP_FUNCTION(init, NULL),
@@ -280,13 +197,14 @@ void BranchContextInitializer(void* extData, const uint8_t* ctxType, FREContext 
         MAP_FUNCTION(getReferralCode, NULL),
         MAP_FUNCTION(createReferralCode, NULL),
         MAP_FUNCTION(validateReferralCode, NULL),
-        MAP_FUNCTION(applyReferralCode, NULL)
+        MAP_FUNCTION(applyReferralCode, NULL),
+        MAP_FUNCTION(prepareUniversalObject, NULL)
     };
     
     *numFunctionsToSet = sizeof( functionMap ) / sizeof( FRENamedFunction );
     *functionsToSet = functionMap;
     
-    typeConverter = [[TypeConversion alloc] init];
+    typeConverter = [TypeConversion sharedInstance];
     branchHelpers = [[BranchHelpers alloc] initWithContext:ctx];
 }
 

@@ -8,7 +8,18 @@
 
 #import "TypeConversion.h"
 
+static TypeConversion* airTypeConversionInstance = nil;
+
 @implementation TypeConversion
+
++ (TypeConversion*) sharedInstance
+{
+    if(airTypeConversionInstance == nil)
+    {
+        airTypeConversionInstance = [[TypeConversion alloc] init];
+    }
+    return airTypeConversionInstance;
+}
 
 
 - (FREResult) FREGetObject:(FREObject)object asString:(NSString**)value {
@@ -82,4 +93,60 @@
     return JSONString;
 }
 
+- (nullable NSString*) getStringProperty:(nonnull NSString*) propName object:(nonnull FREObject) object
+{
+    FREObject propValue;
+    if( FREGetObjectProperty( object, (const uint8_t*) [propName UTF8String], &propValue, NULL ) != FRE_OK )
+    {
+        return nil;
+    }
+    NSString* result = nil;
+    [self FREGetObject:propValue asString:&result];
+    return result;
+}
+
+- (nullable NSArray*) getArrayProperty:(nonnull NSString*) propName object:(nonnull FREObject) object
+{
+    FREObject propArray;
+    if( FREGetObjectProperty( object, (const uint8_t*) [propName UTF8String], &propArray, NULL ) != FRE_OK )
+    {
+        return nil;
+    }
+    
+    uint32_t arrayLength;
+    FREGetArrayLength( propArray, &arrayLength );
+    
+    NSMutableArray* mutableArray = [NSMutableArray arrayWithCapacity:arrayLength];
+    
+    for( uint32_t i = 0; i < arrayLength; i++ )
+    {
+        FREObject itemRaw;
+        FREGetArrayElementAt( propArray, i, &itemRaw );
+        
+        NSString* item = nil;
+        [self FREGetObject:itemRaw asString:&item];
+        
+        if(item != nil)
+        {
+            [mutableArray addObject:item];
+        }
+    }
+
+    return mutableArray;
+}
+
+- (nullable NSDictionary*) getDictionaryFromJson:(nonnull NSString*) jsonString
+{
+    NSError* jsonError;
+    NSData* objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:objectData
+                                           options:NSJSONReadingMutableContainers
+                                             error:&jsonError];
+}
+
 @end
+
+
+
+
+

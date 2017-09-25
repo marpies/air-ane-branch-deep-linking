@@ -11,10 +11,16 @@
 
 @interface TypeConversion : NSObject
 
++ (nonnull TypeConversion*) sharedInstance;
+
 - (FREResult) FREGetObject:(FREObject)object asString:(NSString**)value;
 - (FREResult) FREGetString:(NSString*)string asObject:(FREObject*)asString;
 - (FREResult) FREGetObject:(FREObject)object asSetOfStrings:(NSMutableSet**)value;
 
 + (NSString *) ConvertNSDictionaryToJSONString:(NSDictionary *) dictionary;
+
+- (nullable NSString*) getStringProperty:(nonnull NSString*) propName object:(nonnull FREObject) object;
+- (nullable NSArray*) getArrayProperty:(nonnull NSString*) propName object:(nonnull FREObject) object;
+- (nullable NSDictionary*) getDictionaryFromJson:(nonnull NSString*) jsonString;
 
 @end
