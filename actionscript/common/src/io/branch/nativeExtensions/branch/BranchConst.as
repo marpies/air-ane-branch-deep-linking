@@ -41,6 +41,14 @@ package io.branch.nativeExtensions.branch {
 		static public const LINK_TYPE_UNLIMITED_USE:uint = 0;
 		static public const LINK_TYPE_ONE_TIME_USE:uint = 1;
 
+		static public const ACTION_VIEW:String = "View";
+		static public const ACTION_ADD_TO_WISH_LIST:String = "Add to Wishlist";
+		static public const ACTION_ADD_TO_CART:String = "Add to Cart";
+		static public const ACTION_PURCHASE_STARTED:String = "Purchase Started";
+		static public const ACTION_PURCHASED:String = "Purchased";
+		static public const ACTION_SHARE_STARTED:String = "Share Started";
+		static public const ACTION_SHARE_COMPLETED:String = "Share Completed";
+
 		public function BranchConst() {
 		}
 	}

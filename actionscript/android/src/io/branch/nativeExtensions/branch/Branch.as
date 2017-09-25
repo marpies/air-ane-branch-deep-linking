@@ -52,9 +52,21 @@ package io.branch.nativeExtensions.branch {
 			extensionContext.call("setIdentity", userId);
 		}
 
-		public function getShortUrl(tags:Array = null, channel:String = "", feature:String = "", stage:String = "", json:String = "{}", alias:String = "", type:int = -1):void {
+		public function prepareUniversalObject(universalObject:BranchUniversalObject):void {
+			if(universalObject == null)
+			{
+				universalObject = new BranchUniversalObject();
+			}
+			extensionContext.call("prepareUniversalObject", universalObject);
+		}
 
-			extensionContext.call("getShortUrl", tags, channel, feature, stage, json, alias, type);
+		public function getShortUrl(properties:BranchLinkProperties):void {
+			if(properties == null)
+			{
+				properties = new BranchLinkProperties();
+			}
+
+			extensionContext.call("getShortUrl", properties);
 		}
 
 		public function logout():void {
@@ -74,9 +86,9 @@ package io.branch.nativeExtensions.branch {
 			return extensionContext.call("getFirstReferringParams") as String;
 		}
 
-		public function userCompletedAction(action:String, stateStringifiedJSON:String = "{}"):void {
+		public function userCompletedAction(action:String):void {
 
-			extensionContext.call("userCompletedAction", action, stateStringifiedJSON);
+			extensionContext.call("userCompletedAction", action);
 		}
 
 		public function getCredits(bucket:String = ""):void {
@@ -92,26 +104,6 @@ package io.branch.nativeExtensions.branch {
 		public function getCreditsHistory(bucket:String = ""):void {
 
 			extensionContext.call("getCreditsHistory", bucket);
-		}
-
-		public function getReferralCode():void {
-			
-			extensionContext.call("getReferralCode");
-		}
-
-		public function createReferralCode(prefix:String, amount:int, expiration:int, bucket:String, calculationType:int, location:int):void {
-
-			extensionContext.call("createReferralCode", prefix, amount, expiration, bucket, calculationType, location);
-		}
-
-		public function validateReferralCode(code:String):void {
-			
-			extensionContext.call("validateReferralCode", code);
-		}
-
-		public function applyReferralCode(code:String):void {
-
-			extensionContext.call("applyReferralCode", code);
 		}
 
 		private function _deactivated(evt:Event):void {
