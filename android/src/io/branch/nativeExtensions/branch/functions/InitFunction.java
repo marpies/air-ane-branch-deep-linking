@@ -1,9 +1,8 @@
 package io.branch.nativeExtensions.branch.functions;
 
-import io.branch.nativeExtensions.branch.BranchExtension;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREObject;
+import io.branch.nativeExtensions.branch.BranchExtension;
 
 public class InitFunction extends BaseFunction {
 	

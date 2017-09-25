@@ -1,5 +1,6 @@
 package io.branch.nativeExtensions.branch.functions;
 
+import com.adobe.fre.*;
 import io.branch.nativeExtensions.branch.BranchExtension;
 import io.branch.nativeExtensions.branch.BranchExtensionContext;
 
@@ -7,11 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-
-import com.adobe.fre.FREArray;
-import com.adobe.fre.FREContext;
-import com.adobe.fre.FREFunction;
-import com.adobe.fre.FREObject;
 
 abstract public class BaseFunction implements FREFunction {
 
@@ -108,4 +104,30 @@ abstract public class BaseFunction implements FREFunction {
 		
 		return result;
 	}
+
+    protected String getStringProperty(String propName, FREObject object)
+    {
+        try
+        {
+            FREObject propValue = object.getProperty(propName);
+            return propValue.getAsString();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    protected List<String> getStringArrayProperty(String propName, FREObject object)
+    {
+        try
+        {
+            FREArray propValue = (FREArray) object.getProperty(propName);
+            return getListOfStringFromFREArray(propValue);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -1,13 +1,9 @@
 package io.branch.nativeExtensions.branch.functions;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import io.branch.nativeExtensions.branch.BranchActivity;
-
 import com.adobe.fre.FREContext;
 import com.adobe.fre.FREFunction;
 import com.adobe.fre.FREObject;
+import io.branch.nativeExtensions.branch.BranchExtension;
 
 public class UserCompletedActionFunction extends BaseFunction implements FREFunction {
 	
@@ -16,18 +12,11 @@ public class UserCompletedActionFunction extends BaseFunction implements FREFunc
 		super.call(context, args);
 		
 		String action = getStringFromFREObject(args[0]);
-		String json = getStringFromFREObject(args[1]);
-		
-		try {
-			
-			JSONObject obj = new JSONObject(json);
-			
-			BranchActivity.branch.userCompletedAction(action, obj);
-			
-		} catch (JSONException t) {
-			
-			t.printStackTrace();
-		}
+
+        if(BranchExtension.currentUniversalObject != null)
+        {
+            BranchExtension.currentUniversalObject.userCompletedAction(action);
+        }
 		
 		return null;
 	}

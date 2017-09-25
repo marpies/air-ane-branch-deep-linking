@@ -1,14 +1,12 @@
 package io.branch.nativeExtensions.branch;
 
-import io.branch.referral.Branch;
-import io.branch.referral.Branch.BranchReferralInitListener;
-import io.branch.referral.BranchError;
-
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import io.branch.referral.Branch;
+import io.branch.referral.Branch.BranchReferralInitListener;
+import io.branch.referral.BranchError;
+import org.json.JSONObject;
 
 public class BranchActivity extends Activity {
 	
@@ -22,9 +20,9 @@ public class BranchActivity extends Activity {
 		
 		Bundle extras = this.getIntent().getExtras();
 		Boolean useTestKey = extras.getBoolean(extraPrefix + ".useTestKey");
-		
+
 		branch = useTestKey ? Branch.getTestInstance(getApplicationContext()) : Branch.getInstance(getApplicationContext());
-		
+
 		branch.initSession(new BranchReferralInitListener() {
 			
 			@Override
