@@ -8,6 +8,12 @@
 	<target name="ios" description="Build iOS Library">
 		<mkdir dir="../temp/ios/build/" />
 
+		<!-- clean the build -->
+        <exec executable="xcodebuild" failonerror="true" dir="../ios/${name}IosExtension">
+            <arg line="-project ${name}IosExtension.xcodeproj"/>
+            <arg line="-alltargets clean"/>
+        </exec>
+
 		<exec executable="xcodebuild" failonerror="true" dir="../ios/${name}IosExtension">
 			<arg line='-project ${name}IosExtension.xcodeproj' />
 			<arg line='-target ${name}IosExtension' />
@@ -122,15 +128,9 @@
 	<target name="package" description="Create the extension package">
 		<exec executable="${sdk.home}/bin/adt" failonerror="true" dir="../temp">
 			<arg value="-package" />
-			<arg value="-storetype" />
-			<arg value="pkcs12" />
-			<arg value="-keystore" />
-			<arg value="${keystore.file}" />
-			<arg value="-storepass" />
-			<arg value="${keystore.password}" />
 			<arg value="-target" />
 			<arg value="ane" />
-			<arg value="${name}.ane" />
+			<arg value="${packageName}.ane" />
 			<arg value="../build/extension.xml" />
 			<arg line="-swc swc/${name}.swc" />
 			<arg line="-platform iPhone-ARM -platformoptions ../build/platform-ios.xml -C ios/ ." />
@@ -139,8 +139,8 @@
 			<arg line="-platform default -C default/ ." />
 		</exec>
 
-		<move file="../temp/${name}.ane" todir="../bin" />
-		<move file="../temp/default/${name}.swc" todir="../bin" />
+		<move file="../temp/${packageName}.ane" todir="../bin" />
+		<move file="../temp/default/${name}.swc" tofile="../bin/${packageName}.swc" />
 		<delete dir="../temp"/>
 	</target>
 	
